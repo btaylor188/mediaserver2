@@ -111,13 +111,13 @@ sudo docker network create -d bridge --subnet=172.20.0.0/24 external
 ###############################
 
 ##########   Traefik Configure ###########
-#sh ./traefik.sh
+sh ./traefik.sh
 ########################################
 
 #########.Install Components.####
-#sudo docker-compose -f ./infrastructure/docker-compose.yaml up -data
-#sudo docker-compose -f ./frontend/docker-compose.yaml up -data
-#sudo docker-compose -f ./backend/docker-compose.yaml up -data
-#sudo rm ./frontend/.env
-#sudo rm ./backend/.env
-#sudo rm ./infrastructure/.env
+sudo docker-compose -f ./infrastructure/docker-compose.yaml up -data
+sudo docker-compose -f ./frontend/docker-compose.yaml up -data
+sudo docker-compose -f ./backend/docker-compose.yaml up -data
+sudo rm ./frontend/.env
+sudo rm ./backend/.env
+sudo rm ./infrastructure/.env
