@@ -174,7 +174,7 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.transmission.entrypoints: web,websecure
-      traefik.http.routers.transmission.rule: Host(`transmission.$DOMAINNAME`)
+      traefik.http.routers.transmission.rule: Host(`torrent.$DOMAINNAME`)
       traefik.http.routers.transmission.tls: true
       traefik.http.routers.transmission.tls.certresolver: production
       traefik.http.routers.transmission.middlewares: traefik-forward-auth
