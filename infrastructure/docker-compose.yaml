@@ -5,8 +5,8 @@ services:
     ports:
       - 9000:9000
     privileged: false
-      entrypoint:
-        - /portainer
+    entrypoint:
+      - /portainer
     environment:
       - PUID=1000
       - PGID=1000
