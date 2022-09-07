@@ -92,6 +92,21 @@ services:
       traefik.http.routers.netdata.middlewares: traefik-forward-auth
     restart: always
     image: titpetric/netdata
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:latest
+    container_name: duckdns
+    network:
+      - external
+    environment:
+      - PUID=1000 #optional
+      - PGID=1000 #optional
+      - TZ=America/Denver
+      - SUBDOMAINS=$DOMAINNAME
+      - TOKEN=$DUCKDNSTOKEN
+      - LOG_FILE=false #optional
+    volumes:
+      - $DOCKERPATH/duckdns:/config #optional
+    restart: unless-stopped
 networks:
   internal:
     external: true

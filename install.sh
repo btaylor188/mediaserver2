@@ -35,6 +35,9 @@ read PIAPASS
 echo "Enter Local Network in CIDR Notation"
 read LOCALNET
 
+echo "DUCKDNS Token"
+read DUCKDNSTOKEN
+
 ##Generate Secret Key
 SECRETKEY=$(hexdump -n 16 -e '4/4 "%08X" 1 "\n"' /dev/random)
 
@@ -50,6 +53,7 @@ export PLEXCLAIM=$PLEXCLAIM
 export PIAUSER=$PIAUSER
 export PIAPASS=$PIAPASS
 export LOCALNET=$LOCALNET
+export DUCKDNSTOKEN=$DUCKDNSTOKEN
 
 sudo rm ./frontend/.env
 sudo rm ./backend/.env
@@ -67,6 +71,7 @@ PLEXCLAIM=$PLEXCLAIM
 PIAUSER=$PIAUSER
 PIAPASS=$PIAPASS
 LOCALNET=$LOCALNET
+DUCKDNSTOKEN=$DUCKDNSTOKEN
 EOF1
 
 cat > ./backend/.env << EOF1
@@ -82,6 +87,7 @@ PLEXCLAIM=$PLEXCLAIM
 PIAUSER=$PIAUSER
 PIAPASS=$PIAPASS
 LOCALNET=$LOCALNET
+DUCKDNSTOKEN=$DUCKDNSTOKEN
 EOF1
 
 cat > ./infrastructure/.env << EOF1
@@ -97,6 +103,7 @@ PLEXCLAIM=$PLEXCLAIM
 PIAUSER=$PIAUSER
 PIAPASS=$PIAPASS
 LOCALNET=$LOCALNET
+DUCKDNSTOKEN=$DUCKDNSTOKEN
 EOF1
 
 ###############################
