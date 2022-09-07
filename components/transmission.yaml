@@ -1,0 +1,28 @@
+version: '3.3'
+services:
+  transmission-openvpn:
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - /mnt/processing:/data
+    environment:
+      - OPENVPN_PROVIDER=PIA
+      - OPENVPN_CONFIG=netherlands
+      - OPENVPN_USERNAME=p8145287
+      - OPENVPN_PASSWORD=Bu9zcRKbYb
+      - LOCAL_NETWORK=10.0.0.0/8
+    labels:
+      traefik.enable: true
+      traefik.http.routers.transmission.entrypoints: web,websecure
+      traefik.http.routers.transmission.rule: Host(`transmission.$DOMAINNAME`)
+      traefik.http.routers.transmission.tls: true
+      traefik.http.routers.transmission.tls.certresolver: production
+      traefik.http.routers.transmission.middlewares: traefik-forward-auth
+    networks:
+      - internal
+    ports:
+      - 9091:9091
+    image: haugene/transmission-openvpn
+networks:
+  internal:
+    external: true

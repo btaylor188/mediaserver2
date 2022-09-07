@@ -1,0 +1,29 @@
+version: '3.3'
+services:
+    portainer-ce:
+        container_name: portainer
+        ports:
+            - 9000:9000
+        privileged: false
+        entrypoint:
+            - /portainer
+        environment:
+            - PUID=1000
+            - PGID=1000
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - $DOCKERPATH/portainer/data:/data
+        networks:
+          - internal
+        labels:
+          traefik.enable: true
+          traefik.http.routers.portainer.entrypoints: web,websecure
+          traefik.http.routers.portainer.rule: Host(`portainer.$DOMAINNAME`)
+          traefik.http.routers.portainer.tls: true
+          traefik.http.routers.portainer.tls.certresolver: production
+          traefik.http.routers.portainer.middlewares: traefik-forward-auth
+        restart: always
+        image: portainer/portainer-ce
+networks:
+  internal:
+    external: true

@@ -1,0 +1,24 @@
+version: '3.3'
+services:
+    overseerr:
+        container_name: overseerr
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=America/Denver
+        ports:
+            - 5055:5055
+        volumes:
+            - $DOCKERPATH/overseerr/config:/config
+        labels:
+          traefik.enable: true
+          traefik.http.routers.overseer.entrypoints: web,websecure
+          traefik.http.routers.overseer.rule: Host(`request.$DOMAINNAME`)
+          traefik.http.routers.overseer.tls: true
+          traefik.http.routers.overseer.tls.certresolver: production
+          traefik.http.routers.overseer.middlewares: traefik-forward-auth
+        restart: unless-stopped
+        image: linuxserver/overseerr
+networks:
+  internal:
+    external: true
