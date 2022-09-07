@@ -147,7 +147,7 @@ services:
       - /temp:/temp
     network_mode: service:tdarr
     environment:
-      - nodeID=Node1
+      - nodeID=Node01
       - serverIP=0.0.0.0
       - serverPort=8266
       - TZ=America/Denver
@@ -178,6 +178,7 @@ services:
       traefik.http.routers.transmission.tls: true
       traefik.http.routers.transmission.tls.certresolver: production
       traefik.http.routers.transmission.middlewares: traefik-forward-auth
+      traefik.http.services.transmission.loadbalancer.server.port: 9091
     networks:
       - internal
     ports:

@@ -22,6 +22,7 @@ services:
       traefik.http.routers.portainer.tls: true
       traefik.http.routers.portainer.tls.certresolver: production
       traefik.http.routers.portainer.middlewares: traefik-forward-auth
+      traefik.http.services.portainer.loadbalancer.server.port: 9000
     restart: always
     image: portainer/portainer-ce
   traefik:
