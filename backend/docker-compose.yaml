@@ -123,6 +123,7 @@ services:
       - TZ=America/Denver
       - PUID=1000
       - PGID=1000
+    network_mode: bridge
     ports:
       - 8265:8265
       - 8266:8266
@@ -155,8 +156,6 @@ services:
       - PGID=1000
       - NVIDIA_DRIVER_CAPABILITIES=all
       - NVIDIA_VISIBLE_DEVICES=all
-    ports:
-      - 8267:8267
 #    devices:
 #      - /dev/dri:/dev/dri
     restart: always
