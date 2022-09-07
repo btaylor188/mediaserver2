@@ -1,0 +1,189 @@
+version: '3.3'
+services:
+  nzbget:
+    container_name: nzbget
+    ports:
+      - 6789:6789
+    environment:
+      - LC_ALL=C
+      - PUID=1000
+      - PGID=1000
+      - HOME=/root
+      - TERM=xterm
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - $DOCKERPATH/nzbget:/config
+      - $DOCKERRPATH/processing:/mnt/processing
+      - $MEDIAPATH:/mnt/Media
+      - /tmp:/tmp
+    networks:
+      - internal
+    labels:
+      traefik.enable: true
+      traefik.http.routers.nzbget.entrypoints: web,websecure
+      traefik.http.routers.nzbget.rule: Host(`nzbget.$DOMAINNAME`)
+      traefik.http.routers.nzbget.tls: true
+      traefik.http.routers.nzbget.tls.certresolver: production
+      traefik.http.routers.nzbget.middlewares: traefik-forward-auth
+    restart: always
+    image: linuxserver/nzbget:latest
+  sonarr:
+    container_name: sonarr
+    ports:
+      - 8989:8989
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - HOME=/root
+      - TERM=xterm
+      - XDG_CONFIG_HOME=/config/xdg
+      - LANGUAGE=en_US.UTF-8
+      - LANG=en_US.UTF-8
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - $DOCKERPATH/sonarr:/config
+      - $MEDIAPATH:/mnt/Media
+    networks:
+      - internal
+    labels:
+      traefik.enable: true
+      traefik.http.routers.sonarr.entrypoints: web,websecure
+      traefik.http.routers.sonarr.rule: Host(`sonarr.$DOMAINNAME`)
+      traefik.http.routers.sonarr.tls: true
+      traefik.http.routers.sonarr.tls.certresolver: production
+      traefik.http.routers.sonarr.middlewares: traefik-forward-auth
+    restart: always
+    image: linuxserver/sonarr:latest
+  radarr:
+    container_name: radarr
+    ports:
+      - 7878:7878
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - HOME=/root
+      - TERM=xterm
+      - XDG_CONFIG_HOME=/config/xdg
+      - LANGUAGE=en_US.UTF-8
+      - LANG=en_US.UTF-8
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - $DOCKERPATH/radarr:/config
+      - $MEDIAPATH:/mnt/Media
+    networks:
+      - internal
+    labels:
+      traefik.enable: true
+      traefik.http.routers.radarr.entrypoints: web,websecure
+      traefik.http.routers.radarr.rule: Host(`radarr.$DOMAINNAME`)
+      traefik.http.routers.radarr.tls: true
+      traefik.http.routers.radarr.tls.certresolver: production
+      traefik.http.routers.radarr.middlewares: traefik-forward-auth
+    restart: always
+    image: linuxserver/radarr:latest
+  bazarr:
+    container_name: bazarr
+    ports:
+      - 6767:6767
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - HOME=/root
+      - TERM=xterm
+      - XDG_CONFIG_HOME=/config/xdg
+      - LANGUAGE=en_US.UTF-8
+      - LANG=en_US.UTF-8
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - $DOCKERPATH:/config
+      - $MEDIAPATH:/mnt/Media
+    networks:
+      - internal
+    labels:
+      traefik.enable: true
+      traefik.http.routers.bazarr.entrypoints: web,websecure
+      traefik.http.routers.bazarr.rule: Host(`bazarr.$DOMAINNAME`)
+      traefik.http.routers.bazarr.tls: true
+      traefik.http.routers.bazarr.tls.certresolver: production
+      traefik.http.routers.bazarr.middlewares: traefik-forward-auth
+    restart: always
+    image: linuxserver/bazarr:latest
+  tdarr:
+    container_name: tdarr_server
+    volumes:
+      - $DOCKERPATH/tdarr/server:/app/server
+      - $DOCKERPATH/tdarr/configs:/app/configs
+      - $DOCKERPATH/tdarr/logs:/app/logs
+      - $MEDIAPATH:/media
+      - /temp:/temp
+    environment:
+      - serverIP=0.0.0.0
+      - serverPort=8266
+      - webUIPort=8265
+      - TZ=America/Denver
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - 8265:8265
+      - 8266:8266
+    networks:
+      - internal
+    labels:
+      traefik.enable: true
+      traefik.http.routers.tdarr.entrypoints: web,websecure
+      traefik.http.routers.tdarr.rule: Host(`tdarr.$DOMAINNAME`)
+      traefik.http.routers.tdarr.tls: true
+      traefik.http.routers.tdarr.tls.certresolver: production
+      traefik.http.routers.tdarr.middlewares: traefik-forward-auth
+      traefik.http.services.tdarr.loadbalancer.server.port: 8265
+    restart: always
+    image: haveagitgat/tdarr
+  tdarr_node:
+    container_name: tdarr_node
+    volumes:
+      - $DOCKERPATH/tdarr/configs:/app/configs
+      - $DOCKERPATH/tdarr/logs:/app/logs
+      - $MEDIAPATH:/media
+      - /temp:/temp
+    network_mode: service:tdarr
+    environment:
+      - nodeID=Node1
+      - serverIP=0.0.0.0
+      - serverPort=8266
+      - TZ=America/Denver
+      - PUID=1000
+      - PGID=1000
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - NVIDIA_VISIBLE_DEVICES=all
+    ports:
+      - 8267:8267
+#    devices:
+#      - /dev/dri:/dev/dri
+    restart: always
+    image: haveagitgat/tdarr_node
+  transmission-openvpn:
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - $DOCKERPATH/processing:/data
+    environment:
+      - OPENVPN_PROVIDER=PIA
+      - OPENVPN_CONFIG=netherlands
+      - OPENVPN_USERNAME=$PIAUSERNAME
+      - OPENVPN_PASSWORD=$PIAPASS
+      - LOCAL_NETWORK=$LOCALNET
+    labels:
+      traefik.enable: true
+      traefik.http.routers.transmission.entrypoints: web,websecure
+      traefik.http.routers.transmission.rule: Host(`transmission.$DOMAINNAME`)
+      traefik.http.routers.transmission.tls: true
+      traefik.http.routers.transmission.tls.certresolver: production
+      traefik.http.routers.transmission.middlewares: traefik-forward-auth
+    networks:
+      - internal
+    ports:
+      - 9091:9091
+    image: haugene/transmission-openvpn
+networks:
+  internal:
+    external: true

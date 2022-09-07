@@ -1,0 +1,99 @@
+version: '3.3'
+services:
+  portainer-ce:
+    container_name: portainer
+    ports:
+      - 9000:9000
+    privileged: false
+      entrypoint:
+        - /portainer
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $DOCKERPATH/portainer/data:/data
+    networks:
+      - internal
+    labels:
+      traefik.enable: true
+      traefik.http.routers.portainer.entrypoints: web,websecure
+      traefik.http.routers.portainer.rule: Host(`portainer.$DOMAINNAME`)
+      traefik.http.routers.portainer.tls: true
+      traefik.http.routers.portainer.tls.certresolver: production
+      traefik.http.routers.portainer.middlewares: traefik-forward-auth
+    restart: always
+    image: portainer/portainer-ce
+  traefik:
+    image: "traefik:latest"
+    container_name: "traefik"
+    restart: unless-stopped
+    networks:
+      - internal
+      - external
+    ports:
+      - "80:80"
+      - "443:443"
+      # (Optional) Expose Dashboard
+      - "9980:8080"  # Don't do this in production!
+    volumes:
+      - /mnt/docker/traefik:/etc/traefik
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+  traefik-forward-auth:
+    container_name: traefik-forward-auth
+    image: thomseddon/traefik-forward-auth:latest
+    # image: thomseddon/traefik-forward-auth:2.1-arm # Use this image with Raspberry Pi
+    restart: unless-stopped
+    networks:
+      - internal
+    ports:
+      - "4181:4181"
+    environment:
+      - PROVIDERS_GOOGLE_CLIENT_ID=$OAUTHCLIENT
+      - PROVIDERS_GOOGLE_CLIENT_SECRET=$OAUTHSECRET
+      - SECRET=$SECRETKEY
+      - COOKIE_DOMAIN=$DOMAINNAME
+      - URL_PATH=/_oauth
+      - INSECURE_COOKIE=false
+      - AUTH_HOST=oauth.$DOMAINNAME
+      - WHITELIST=$AUTHORIZEDUSERS
+      - LOG_LEVEL=debug
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.traefik-forward-auth.forwardauth.address=http://traefik-forward-auth:4181
+      - traefik.http.middlewares.traefik-forward-auth.forwardauth.authResponseHeaders=X-Forwarded-User
+      - traefik.http.routers.traefik-forward-auth.rule=Host(`oauth.interwebnet.net`)
+      - traefik.http.routers.traefik-forward-auth.tls=true
+      - traefik.http.serv
+  watchtower:
+    container_name: watchtower
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    restart: always
+    environment:
+      - WATCHTOWER_POLL_INTERVAL=86400
+    image: containrrr/watchtower
+  netdata:
+    container_name: netdata
+    ports:
+      - 19999:19999
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - internal
+    labels:
+      traefik.enable: true
+      traefik.http.routers.netdata.entrypoints: web,websecure
+      traefik.http.routers.netdata.rule: Host(`netdata.$DOMAINNAME`)
+      traefik.http.routers.netdata.tls: true
+      traefik.http.routers.netdata.tls.certresolver: production
+      traefik.http.routers.netdata.middlewares: traefik-forward-auth
+    restart: always
+    image: titpetric/netdata
+networks:
+  internal:
+    external: true
+  external:
+    external: true
