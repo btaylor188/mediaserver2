@@ -162,6 +162,7 @@ services:
     restart: always
     image: haveagitgat/tdarr_node
   transmission-openvpn:
+    container_name: transmission-w-vpn
     cap_add:
       - NET_ADMIN
     volumes:
@@ -169,7 +170,7 @@ services:
     environment:
       - OPENVPN_PROVIDER=PIA
       - OPENVPN_CONFIG=netherlands
-      - OPENVPN_USERNAME=$PIAUSERNAME
+      - OPENVPN_USERNAME=$PIAUSER
       - OPENVPN_PASSWORD=$PIAPASS
       - LOCAL_NETWORK=$LOCALNET
     labels:
