@@ -123,8 +123,8 @@ sh ./traefik.sh
 
 #########.Install Components.####
 sudo docker-compose -f ./infrastructure/docker-compose.yaml up -d
-sudo docker-compose -f ./frontend/docker-compose.yaml up -d
 sudo docker-compose -f ./backend/docker-compose.yaml up -d
+sudo docker-compose -f ./frontend/docker-compose.yaml up -d
 sudo rm ./frontend/.env
 sudo rm ./backend/.env
 sudo rm ./infrastructure/.env
