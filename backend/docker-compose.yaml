@@ -43,6 +43,7 @@ services:
       - /etc/localtime:/etc/localtime
       - $DOCKERPATH/sonarr:/config
       - $MEDIAPATH:/mnt/Media
+      - $DOCKERPATH/processing:/mnt/processing
     networks:
       - internal
     labels:
@@ -70,6 +71,7 @@ services:
       - /etc/localtime:/etc/localtime
       - $DOCKERPATH/radarr:/config
       - $MEDIAPATH:/mnt/Media
+      - $DOCKERPATH/processing:/mnt/processing
     networks:
       - internal
     labels:
