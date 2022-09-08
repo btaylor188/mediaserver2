@@ -86,11 +86,11 @@ services:
       - internal
     labels:
       traefik.enable: true
-      traefik.http.routers.netdata.entrypoints: web,websecure
-      traefik.http.routers.netdata.rule: Host(`netdata.$DOMAINNAME`)
-      traefik.http.routers.netdata.tls: true
-      traefik.http.routers.netdata.tls.certresolver: production
-      traefik.http.routers.netdata.middlewares: traefik-forward-auth
+      traefik.http.routers.kuma.entrypoints: web,websecure
+      traefik.http.routers.kuma.rule: Host(`netdata.$DOMAINNAME`)
+      traefik.http.routers.kuma.tls: true
+      traefik.http.routers.kuma.tls.certresolver: production
+      traefik.http.routers.kuma.middlewares: traefik-forward-auth
     restart: always
     image: titpetric/netdata
   duckdns:
@@ -116,15 +116,15 @@ services:
       - internal
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - $DOCKERPATH/uptime-kuma:/app/data
     labels:
       traefik.enable: true
-      traefik.http.routers.uptime-kuma.entrypoints: web,websecure
-      traefik.http.routers.uptime-kuma.rule: Host(`kuma.$DOMAINNAME`)
-      traefik.http.routers.uptime-kuma.tls: true
-      traefik.http.routers.uptime-kuma.tls.certresolver: production
-      traefik.http.routers.uptime-kuma.middlewares: traefik-forward-auth
-    volumes:
-      - $DOCKERPATH/uptime-kuma:/app/data
+      traefik.http.routers.kuma.rule: Host(`kuma.$DOMAINNAME`)
+      traefik.http.routers.kuma.entrypoints: web,websecure
+      traefik.http.routers.kuma.tls: true
+      traefik.http.routers.kuma.tls.certresolver:production
+      traefik.http.services.kuma.loadBalancer.server.port: 3001
+      traefik.http.routers.netdata.middlewares: traefik-forward-auth
     container_name: uptime-kuma
     image: 'louislam/uptime-kuma:1'
 networks:
