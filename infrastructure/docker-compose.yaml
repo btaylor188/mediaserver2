@@ -114,6 +114,8 @@ services:
       - '3001:3001'
     networks:
       - internal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     labels:
       traefik.enable: true
       traefik.http.routers.uptime-kuma.entrypoints: web,websecure
