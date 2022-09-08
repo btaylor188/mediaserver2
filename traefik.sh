@@ -66,6 +66,5 @@ providers:
     watch: true
 EOF1
 
-## Install Traefik Container
-docker-compose -f ./components/traefik-oauth.yaml up -d
+
 

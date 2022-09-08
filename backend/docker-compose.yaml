@@ -147,7 +147,7 @@ services:
       - /temp:/temp
     network_mode: service:tdarr
     environment:
-      - nodeID=Node1
+      - nodeID=Node01
       - serverIP=0.0.0.0
       - serverPort=8266
       - TZ=America/Denver
@@ -155,13 +155,12 @@ services:
       - PGID=1000
       - NVIDIA_DRIVER_CAPABILITIES=all
       - NVIDIA_VISIBLE_DEVICES=all
-    ports:
-      - 8267:8267
 #    devices:
 #      - /dev/dri:/dev/dri
     restart: always
     image: haveagitgat/tdarr_node
   transmission-openvpn:
+    container_name: transmission-w-vpn
     cap_add:
       - NET_ADMIN
     volumes:
@@ -169,16 +168,17 @@ services:
     environment:
       - OPENVPN_PROVIDER=PIA
       - OPENVPN_CONFIG=netherlands
-      - OPENVPN_USERNAME=$PIAUSERNAME
+      - OPENVPN_USERNAME=$PIAUSER
       - OPENVPN_PASSWORD=$PIAPASS
       - LOCAL_NETWORK=$LOCALNET
     labels:
       traefik.enable: true
       traefik.http.routers.transmission.entrypoints: web,websecure
-      traefik.http.routers.transmission.rule: Host(`transmission.$DOMAINNAME`)
+      traefik.http.routers.transmission.rule: Host(`torrent.$DOMAINNAME`)
       traefik.http.routers.transmission.tls: true
       traefik.http.routers.transmission.tls.certresolver: production
       traefik.http.routers.transmission.middlewares: traefik-forward-auth
+      traefik.http.services.transmission.loadbalancer.server.port: 9091
     networks:
       - internal
     ports:

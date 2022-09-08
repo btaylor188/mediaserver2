@@ -5,8 +5,8 @@ services:
     ports:
       - 9000:9000
     privileged: false
-      entrypoint:
-        - /portainer
+    entrypoint:
+      - /portainer
     environment:
       - PUID=1000
       - PGID=1000
@@ -22,6 +22,7 @@ services:
       traefik.http.routers.portainer.tls: true
       traefik.http.routers.portainer.tls.certresolver: production
       traefik.http.routers.portainer.middlewares: traefik-forward-auth
+      traefik.http.services.portainer.loadbalancer.server.port: 9000
     restart: always
     image: portainer/portainer-ce
   traefik:
@@ -64,7 +65,7 @@ services:
       - traefik.http.middlewares.traefik-forward-auth.forwardauth.authResponseHeaders=X-Forwarded-User
       - traefik.http.routers.traefik-forward-auth.rule=Host(`oauth.interwebnet.net`)
       - traefik.http.routers.traefik-forward-auth.tls=true
-      - traefik.http.serv
+      - traefik.http.services.traefik-forward-auth.loadbalancer.server.port=4181
   watchtower:
     container_name: watchtower
     volumes:
@@ -92,6 +93,21 @@ services:
       traefik.http.routers.netdata.middlewares: traefik-forward-auth
     restart: always
     image: titpetric/netdata
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:latest
+    container_name: duckdns
+    networks:
+      - external
+    environment:
+      - PUID=1000 #optional
+      - PGID=1000 #optional
+      - TZ=America/Denver
+      - SUBDOMAINS=$DOMAINNAME
+      - TOKEN=$DUCKDNSTOKEN
+      - LOG_FILE=false #optional
+    volumes:
+      - $DOCKERPATH/duckdns:/config #optional
+    restart: unless-stopped
 networks:
   internal:
     external: true

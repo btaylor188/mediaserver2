@@ -35,6 +35,9 @@ read PIAPASS
 echo "Enter Local Network in CIDR Notation"
 read LOCALNET
 
+echo "DUCKDNS Token"
+read DUCKDNSTOKEN
+
 ##Generate Secret Key
 SECRETKEY=$(hexdump -n 16 -e '4/4 "%08X" 1 "\n"' /dev/random)
 
@@ -50,10 +53,11 @@ export PLEXCLAIM=$PLEXCLAIM
 export PIAUSER=$PIAUSER
 export PIAPASS=$PIAPASS
 export LOCALNET=$LOCALNET
+export DUCKDNSTOKEN=$DUCKDNSTOKEN
 
-#sudo rm ./frontend/.env
-#sudo rm ./backend/.env
-#sudo rm ./infrastructure/.env
+sudo rm ./frontend/.env
+sudo rm ./backend/.env
+sudo rm ./infrastructure/.env
 cat > ./frontend/.env << EOF1
 DOMAINNAME=$DOMAINNAME
 DOCKERPATH=$DOCKERPATH
@@ -67,6 +71,7 @@ PLEXCLAIM=$PLEXCLAIM
 PIAUSER=$PIAUSER
 PIAPASS=$PIAPASS
 LOCALNET=$LOCALNET
+DUCKDNSTOKEN=$DUCKDNSTOKEN
 EOF1
 
 cat > ./backend/.env << EOF1
@@ -82,6 +87,7 @@ PLEXCLAIM=$PLEXCLAIM
 PIAUSER=$PIAUSER
 PIAPASS=$PIAPASS
 LOCALNET=$LOCALNET
+DUCKDNSTOKEN=$DUCKDNSTOKEN
 EOF1
 
 cat > ./infrastructure/.env << EOF1
@@ -97,6 +103,7 @@ PLEXCLAIM=$PLEXCLAIM
 PIAUSER=$PIAUSER
 PIAPASS=$PIAPASS
 LOCALNET=$LOCALNET
+DUCKDNSTOKEN=$DUCKDNSTOKEN
 EOF1
 
 ###############################
@@ -111,13 +118,13 @@ sudo docker network create -d bridge --subnet=172.20.0.0/24 external
 ###############################
 
 ##########   Traefik Configure ###########
-#sh ./traefik.sh
+sh ./traefik.sh
 ########################################
 
 #########.Install Components.####
-#sudo docker-compose -f ./infrastructure/docker-compose.yaml up -data
-#sudo docker-compose -f ./frontend/docker-compose.yaml up -data
-#sudo docker-compose -f ./backend/docker-compose.yaml up -data
-#sudo rm ./frontend/.env
-#sudo rm ./backend/.env
-#sudo rm ./infrastructure/.env
+sudo docker-compose -f ./infrastructure/docker-compose.yaml up -d
+sudo docker-compose -f ./backend/docker-compose.yaml up -d
+sudo docker-compose -f ./frontend/docker-compose.yaml up -d
+sudo rm ./frontend/.env
+sudo rm ./backend/.env
+sudo rm ./infrastructure/.env
