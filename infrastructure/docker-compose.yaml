@@ -114,6 +114,13 @@ services:
       - '3001:3001'
     networks:
       - internal
+    labels:
+      traefik.enable: true
+      traefik.http.routers.uptime-kuma.entrypoints: web,websecure
+      traefik.http.routers.uptime-kuma.rule: Host(`kuma.$DOMAINNAME`)
+      traefik.http.routers.uptime-kuma.tls: true
+      traefik.http.routers.uptime-kuma.tls.certresolver: production
+      traefik.http.routers.uptime-kuma.middlewares: traefik-forward-auth
     volumes:
       - $DOCKERPATH/uptime-kuma:/app/data
     container_name: uptime-kuma
