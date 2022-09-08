@@ -46,6 +46,8 @@ entryPoints:
   websecure:
     address: :443
 
+serversTransport:
+  insecureSkipVerify: false
 # Configure your CertificateResolver here...
 # ---
 certificatesResolvers:
