@@ -122,7 +122,7 @@ services:
       traefik.http.routers.kuma.rule: Host(`kuma.$DOMAINNAME`)
       traefik.http.routers.kuma.entrypoints: web,websecure
       traefik.http.routers.kuma.tls: true
-      traefik.http.routers.kuma.tls.certresolver:production
+      traefik.http.routers.kuma.tls.certresolver: production
       traefik.http.services.kuma.loadBalancer.server.port: 3001
       traefik.http.routers.kuma.middlewares: traefik-forward-auth
     container_name: uptime-kuma

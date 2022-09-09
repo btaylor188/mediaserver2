@@ -169,10 +169,12 @@ services:
       - $DOCKERPATH/processing:/data
     environment:
       - OPENVPN_PROVIDER=PIA
-      - OPENVPN_CONFIG=netherlands
+      - OPENVPN_CONFIG=us_denver
       - OPENVPN_USERNAME=$PIAUSER
       - OPENVPN_PASSWORD=$PIAPASS
       - LOCAL_NETWORK=$LOCALNET
+      - PUID: 1000
+      - PGID: 1000
     labels:
       traefik.enable: true
       traefik.http.routers.transmission.entrypoints: web,websecure
