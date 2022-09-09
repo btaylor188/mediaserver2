@@ -148,6 +148,7 @@ services:
       - $MEDIAPATH:/media
       - /temp:/temp
     network_mode: service:tdarr
+    runtime: nvidia
     environment:
       - nodeID=Node01
       - serverIP=0.0.0.0
