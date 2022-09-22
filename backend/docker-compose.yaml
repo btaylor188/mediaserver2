@@ -174,8 +174,8 @@ services:
       - OPENVPN_USERNAME=$PIAUSER
       - OPENVPN_PASSWORD=$PIAPASS
       - LOCAL_NETWORK=$LOCALNET
-      - PUID: 1000
-      - PGID: 1000
+      - PUID=1000
+      - PGID=1000
     labels:
       traefik.enable: true
       traefik.http.routers.transmission.entrypoints: web,websecure
