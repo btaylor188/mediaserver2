@@ -66,6 +66,11 @@ providers:
     # watch for dynamic configuration changes
     directory: /etc/traefik
     watch: true
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+
 EOF1
 
 
