@@ -38,6 +38,12 @@ read LOCALNET
 echo "DUCKDNS Token"
 read DUCKDNSTOKEN
 
+echo "Nextcloud DB Root Password"
+read NCDBROOT
+
+echo "Nextcloud DB User Password"
+read NCDBUSER
+
 ##Generate Secret Key
 SECRETKEY=$(hexdump -n 16 -e '4/4 "%08X" 1 "\n"' /dev/random)
 
@@ -54,6 +60,8 @@ export PIAUSER=$PIAUSER
 export PIAPASS=$PIAPASS
 export LOCALNET=$LOCALNET
 export DUCKDNSTOKEN=$DUCKDNSTOKEN
+export NCDBROOT=$NCDBROOT
+export NCDBUSER-$NCDBUSER
 
 sudo rm ./frontend/.env
 sudo rm ./backend/.env
